@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Productos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #d0fdd7; 
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #171a4a; 
+      color: white;
+      padding: 15px 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header .logo img {
+      width: 50px;
+      height: auto;
+    }
+
+    header h1 {
+      font-size: 20px;
+      color: #9bfab0; 
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #9bfab0;
+    }
+
+    .carrito-btn {
+      background: #64c27b; 
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .carrito-btn:hover {
+      background: #2f2c79; 
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+    }
+
+    aside {
+      width: 200px;
+      background: #2f2c79; 
+      color: white;
+      padding: 20px;
+    }
+
+    aside h2 {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #9bfab0; 
+    }
+
+    aside ul {
+      list-style: none;
+    }
+
+    aside ul li {
+      margin: 10px 0;
+    }
+
+    aside ul li a {
+      color: white;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    aside ul li a:hover {
+      color: #9bfab0;
+    }
+
+    .productos {
+      flex: 1;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .producto {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s;
+      position: relative;
+    }
+
+    .producto:hover {
+      transform: scale(1.03);
+    }
+
+    .producto img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .producto h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+      color: #171a4a; 
+    }
+
+    .producto p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .producto button {
+      margin-top: 10px;
+      background: #64c27b; 
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .producto button:hover {
+      background: #2f2c79; 
+    }
+
+    .agotado {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: red;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .carrito {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 300px;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+      transition: right 0.3s ease-in-out;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      z-index: 1100;
+    }
+
+    .carrito.open {
+      right: 0;
+    }
+
+    .carrito header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      margin-bottom: 15px;
+    }
+
+    .carrito h2 {
+      font-size: 20px;
+      color: #000; 
+    }
+
+    .carrito .cerrar-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .carrito-lista {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .carrito-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .carrito-item button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .carrito-total {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #171a4a; 
+    }
+
+    .vaciar-btn {
+      background: #2f2c79;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .vaciar-btn:hover {
+      background: #171a4a;
+    }
+
+    footer {
+      background: #171a4a; 
+      color: #fff;
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 14px;
+    }
+
+    footer p {
+      margin: 5px 0;
+    }
+
+    footer a {
+      color: #9bfab0;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="c:\Users\junio\Downloads\WhatsApp Image 2025-09-18 at 1.27.03 AM.jpeg" alt="Logo Flores Core Clean">
+      <h1>Flores Core Clean</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Servicios</a></li>
+        <li><a href="#">Productos</a></li>
+        <li><a href="#">Contacto</a></li>
+        <li><button class="carrito-btn" onclick="toggleCarrito()">🛒 Carrito</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <aside>
+      <h2>Catálogo</h2>
+      <ul>
+        <li><a href="#">Ambientadores</a></li>
+        <li><a href="#">Aspiradoras</a></li>
+        <li><a href="#">Blanqueadores</a></li>
+        <li><a href="#">Desinfectantes</a></li>
+        <li><a href="#">Shampoos</a></li>
+      </ul>
+    </aside>
+
+    <section class="productos"></section>
+  </main>
+
+  <div class="carrito" id="carrito">
+    <header>
+      <h2>Carrito de Compras</h2>
+      <button class="cerrar-btn" onclick="toggleCarrito()">✕</button>
+    </header>
+    <div class="carrito-lista" id="carrito-lista"></div>
+    <p class="carrito-total" id="carrito-total">Total: S/ 0.00</p>
+    <button class="vaciar-btn" onclick="vaciarCarrito()">Vaciar carrito</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Flores Core Clean. Todos los derechos reservados.</p>
+    <p>
+      Contacto: 
+      <a href="mailto:contacto@florescoreclean.com">contacto@florescoreclean.com</a> | 
+      Tel: +51 999 888 777
+    </p>
+  </footer>
+
+  <script>
+    let carrito = [];
+
+    let productos = [
+      { nombre: "Shampoo antibacterial", precio: 35, stock: 12, imagen: "https://dojiw2m9tvv09.cloudfront.net/54185/product/0007840875.png" },
+      { nombre: "Aspiradora industrial", precio: 2500, stock: 5, imagen: "https://tiendakarcher.pe/wp-content/uploads/2025/08/1355-3070_1-3dd5d728-338f-429d-a7b1-23e546af2875-300x300.png" },
+      { nombre: "Blanqueador de colchones", precio: 40, stock: 20, imagen: "https://m.media-amazon.com/images/I/6174ABg-6FL.jpg" },
+      { nombre: "Vaporizador / Limpiador a vapor", precio: 1200, stock: 8, imagen: "https://media.sodimac.com.pe/falabellaPE/122839263_04/width=170,height=170,quality=70,format=webp,fit=pad" },
+      { nombre: "Limpiador con bicarbonato", precio: 25, stock: 15, imagen: "https://plazavea.vteximg.com.br/arquivos/ids/542112-450-450/20196077.jpg?v=637424340591770000" },
+    ];
+
+    function toggleCarrito() {
+      document.getElementById("carrito").classList.toggle("open");
+    }
+
+    function renderProductos() {
+      const contenedor = document.querySelector(".productos");
+      contenedor.innerHTML = "";
+      productos.forEach((p, index) => {
+        const card = document.createElement("div");
+        card.classList.add("producto");
+
+        card.innerHTML = `
+          <img src="${p.imagen}" alt="${p.nombre}">
+          <h3>${p.nombre}</h3>
+          <p>Precio: S/ ${p.precio.toFixed(2)}</p>
+          <p id="stock-${index}">Stock: ${p.stock}</p>
+          <button onclick="agregarAlCarrito(${index})" ${p.stock <= 0 ? "disabled" : ""}>Añadir al carrito</button>
+          ${p.stock <= 0 ? `<span class="agotado">Agotado</span>` : ""}
+        `;
+
+        contenedor.appendChild(card);
+      });
+    }
+
+    function agregarAlCarrito(index) {
+      if (productos[index].stock > 0) {
+        const itemCarrito = carrito.find(p => p.nombre === productos[index].nombre);
+        if (itemCarrito) {
+          itemCarrito.cantidad++;
+        } else {
+          carrito.push({ nombre: productos[index].nombre, precio: productos[index].precio, cantidad: 1 });
+        }
+        productos[index].stock--; 
+        renderProductos();
+        renderCarrito();
+      } else {
+        alert("⚠️ Stock agotado para " + productos[index].nombre);
+      }
+    }
+
+    function eliminarDelCarrito(index) {
+      const item = carrito[index];
+      const producto = productos.find(p => p.nombre === item.nombre);
+      producto.stock += item.cantidad; 
+      carrito.splice(index, 1);
+      renderProductos();
+      renderCarrito();
+    }
+
+    function vaciarCarrito() {
+      carrito.forEach(item => {
+        const producto = productos.find(p => p.nombre === item.nombre);
+        producto.stock += item.cantidad; 
+      });
+      carrito = [];
+      renderProductos();
+      renderCarrito();
+    }
+
+    function renderCarrito() {
+      const lista = document.getElementById("carrito-lista");
+      const total = document.getElementById("carrito-total");
+      lista.innerHTML = "";
+      let suma = 0;
+
+      carrito.forEach((item, index) => {
+        suma += item.precio * item.cantidad;
+        const div = document.createElement("div");
+        div.classList.add("carrito-item");
+        div.innerHTML = `
+          <span>${item.nombre} (${item.cantidad}x) - S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
+          <button onclick="eliminarDelCarrito(${index})">Eliminar</button>
+        `;
+        lista.appendChild(div);
+      });
+
+      total.textContent = "Total: S/ " + suma.toFixed(2);
+    }
+
+    renderProductos();
+  </script>
+</body>
+</html>
